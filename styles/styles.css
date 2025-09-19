@@ -1,0 +1,499 @@
+/* Reset + global */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    overflow-x: hidden;
+    /* remove horizontal scrollbar */
+    scroll-behavior: smooth;
+}
+
+body {
+    background: whitesmoke;
+    /* light theme */
+    color: #1a1a1a;
+    /* dark text for readability */
+    font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    cursor: none;
+}
+
+/* Center text utilities */
+.center {
+    text-align: center;
+    opacity: .9;
+}
+
+.hint {
+    font-size: 14px;
+    opacity: .85;
+}
+
+/* Custom cursor */
+#cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    width: 64px;
+    height: 64px;
+    transform-origin: 32px 32px;
+    will-change: transform, translate;
+    transition: filter .12s linear;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .45));
+}
+
+#cursor.pressed {
+    transform-origin: 32px 32px scale(.92);
+}
+
+#cursor .dot {
+    opacity: 0;
+}
+
+/* Navbar */
+header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 32px;
+    background: rgba(255, 255, 255, 0.9);
+    /* light background */
+    /* translucent dark background */
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(128, 0, 0, 0.5);
+    /* maroon accent border */
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 20px;
+    color: #1a1a1a;
+    /* dark text */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li a {
+    color: #1a1a1a;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: all 0.25s ease-in-out;
+    white-space: nowrap;
+    /* NEW — keeps text on one line */
+}
+
+.nav-links li a:hover {
+    background: maroon;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.5);
+}
+
+/* Hamburger toggle button */
+.menu-toggle {
+    display: none;
+    position: relative;
+    width: 36px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Hamburger bars */
+.menu-toggle span {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 3px;
+    background-color: maroon;
+    /* changed from #e6eef8 */
+    border-radius: 2px;
+    transform-origin: center;
+    transition: transform 0.32s cubic-bezier(.2, .8, .2, 1), opacity 0.18s ease;
+}
+
+/* initial offsets (stacked visually) */
+.menu-toggle span:nth-child(1) {
+    transform: translateY(-8px);
+}
+
+.menu-toggle span:nth-child(2) {
+    transform: translateY(0);
+}
+
+.menu-toggle span:nth-child(3) {
+    transform: translateY(8px);
+}
+
+/* active = X shape (bars meet at center and rotate) */
+.menu-toggle.active span:nth-child(1) {
+    transform: translateY(0) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: translateY(0) rotate(-45deg);
+}
+
+/* Mobile menu */
+@media (max-width: 1000px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        /* ensure all items same width */
+        background: rgba(255, 255, 255, 0.95);
+        /* lighter background to match whitesmoke */
+        width: 300px;
+        padding: 16px;
+        gap: 8px;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        border-left: 1px solid rgba(128, 0, 0, 0.4);
+        box-sizing: border-box;
+    }
+
+    .nav-links.active {
+        transform: translateX(0);
+    }
+
+    .nav-links li a {
+        display: block;
+        width: 100%;
+        text-align: left;
+        word-break: break-word;
+    }
+}
+
+/* Intro section */
+.intro-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* center content horizontally */
+    align-items: center;
+    /* center vertically within padding */
+    padding: 100px 20px 60px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.intro-content {
+    max-width: 900px;
+}
+
+.intro-img {
+    width: 100%;
+    max-width: 500px;
+    /* large on desktop */
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.intro-caption {
+    font-size: clamp(18px, 2.5vw, 28px);
+    /* scales with screen size */
+    color: #1a1a1a;
+    /* dark text */
+    line-height: 1.5;
+}
+
+.intro-caption span {
+    font-size: clamp(14px, 2vw, 20px);
+    opacity: 0.8;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    /* thin scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    /* subtle background */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: maroon;
+    /* scrollbar color */
+    border-radius: 10px;
+    /* rounded edges */
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #800000;
+    /* darker maroon on hover */
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: maroon rgba(255, 255, 255, 0.05);
+}
+
+
+.projects-section {
+    width: 100%;
+    padding: 100px 20px 60px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.section-title {
+    font-size: 28px;
+    margin-bottom: 40px;
+    color: #1a1a1a;
+    /* dark text */
+}
+
+.projects-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.project-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #1a1a1a;
+    /* dark text */
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 30px;
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(128, 0, 0, 0.6);
+    border-radius: 30px;
+}
+
+.project-img {
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 12px;
+    border-radius: 30px;
+    background: #fff;
+    padding: 20px;
+}
+
+.project-card span {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+/* Mga Kaibigan Section */
+.friends-section {
+    width: 100%;
+    padding: 100px 20px 60px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.friends-grid {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.friend-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    max-width: 400px;
+    width: 100%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.friend-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(128, 0, 0, 0.3);
+}
+
+.friend-media {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    object-fit: cover;
+}
+
+.friend-caption {
+    font-size: 16px;
+    color: #1a1a1a;
+    line-height: 1.4;
+}
+
+.friend-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.friend-links a {
+    color: maroon;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.friend-links a:hover {
+    color: #800000;
+    /* darker maroon */
+    text-decoration: underline;
+}
+
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    color: rgba(255, 255, 255, 0.85);
+    pointer-events: none;
+    /* clicks pass through to video */
+    transition: opacity 0.3s ease;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.video-wrapper:hover .play-overlay {
+    opacity: 0;
+    /* hide icon when hovered */
+}
+
+.volume-overlay {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 6px 8px;
+    cursor: pointer;
+    /* now clickable */
+    user-select: none;
+    transition: opacity 0.3s ease;
+}
+
+.progress-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: maroon;
+    transition: width 0.1s linear;
+}
+
+/* Pakihanap si Engineer Section */
+.socials-section {
+    width: 100%;
+    padding: 100px 20px 60px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.socials-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.social-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 16px;
+}
+
+.social-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(128, 0, 0, 0.4);
+}
+
+.social-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    /* makes icons circular */
+    object-fit: cover;
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 12px;
+}
+
+.social-card span {
+    font-size: 16px;
+    font-weight: 600;
+}

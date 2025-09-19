@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Custom Pointer + Click Sound</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #0f172a 0%, #071133 100%);
+      color: #e6eef8;
+      font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    .center {
+      text-align: center;
+      opacity: .9
+    }
+
+    .hint {
+      font-size: 14px;
+      opacity: .85
+    }
+
+    #cursor {
+      position: fixed;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+      width: 64px;
+      height: 64px;
+      transform-origin: 32px 32px;
+      will-change: transform, translate;
+      transition: filter .12s linear;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .45));
+    }
+
+    #cursor.pressed {
+      transform-origin: 32px 32px scale(.92);
+    }
+
+    #cursor .dot {
+      opacity: .0
+    }
+  </style>
+</head>
+
+<body>
+  <div class="center">
+    <h1>Custom Pointer — follows direction</h1>
+    <p class="hint">Move your mouse or touch the screen. Tap / click to play a sound.</p>
+  </div>
+
+  <div id="cursor" aria-hidden="true">
+    <img src="coco-martin.svg" width="64" height="64" alt="cursor">
+  </div>
+
+  <script>
+    (function () {
+      const cursor = document.getElementById('cursor');
+
+      let x = window.innerWidth / 2, y = window.innerHeight / 2;
+      let tx = x, ty = y;
+      let px = tx, py = ty;
+      let angle = 0;
+      const ease = 0.18;
+
+      function onPointerMove(e) {
+        tx = e.clientX;
+        ty = e.clientY;
+      }
+
+      function computeAngle(fromX, fromY, toX, toY) {
+        return Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+      }
+
+      function raf() {
+        x += (tx - x) * ease;
+        y += (ty - y) * ease;
+        const a = computeAngle(px, py, x, y);
+        angle += (a - angle) * 0.25;
+        cursor.style.transform = `translate(${x - 32}px, ${y - 32}px) rotate(${angle}deg)`;
+        px += (x - px) * 0.35;
+        py += (y - py) * 0.35;
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+
+      // Audio buffer method
+      let audioCtx = null;
+      let clickBuffer = null;
+
+      async function loadClickSound() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const resp = await fetch("tapos-na-po.mp3"); // replace with your MP3 path
+        const data = await resp.arrayBuffer();
+        clickBuffer = await audioCtx.decodeAudioData(data);
+      }
+
+      function playClickSound() {
+        if (!clickBuffer) return;
+        const source = audioCtx.createBufferSource();
+        source.buffer = clickBuffer;
+        source.connect(audioCtx.destination);
+        source.start();
+      }
+
+      function onPointerDown(e) {
+        cursor.classList.add('pressed');
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        playClickSound();
+      }
+      function onPointerUp(e) {
+        cursor.classList.remove('pressed');
+      }
+
+      window.addEventListener('pointerdown', onPointerDown);
+      window.addEventListener('pointerup', onPointerUp);
+
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (mq.matches) {
+        document.body.style.cursor = 'auto';
+        cursor.style.display = 'none';
+        window.removeEventListener('pointermove', onPointerMove);
+      }
+
+      document.addEventListener('selectstart', e => e.preventDefault());
+
+      tx = x; ty = y;
+
+      const initAudioOnFirstGesture = function (e) {
+        loadClickSound();
+        window.removeEventListener('pointerdown', initAudioOnFirstGesture);
+      };
+      window.addEventListener('pointerdown', initAudioOnFirstGesture, { passive: true });
+
+    })();
+  </script>
+</body>
+
+</html>
